@@ -66,12 +66,12 @@ php artisan make:model Task -m
 
 - O Laravel já cria também os recursos para utilização de usuários, por enquanto não vamos utilizar, mas já está criado
 
-- Vamos criar um seeder para popular a tabela com dados de teste
+- Precisamos criar também um factory para gerar os dados de teste das tarefas
 ```bash
-php artisan make:seeder TaskSeeder
+php artisan make:factory TaskFactory
 ```
 
-- Vamos ajustar o seeder (database/seeders/TaskSeeder.php) para popular a tabela com dados de teste
+- Vamos ajustar o seeder (database/seeders/DatabaseSeeder.php) para popular a tabela com dados de teste
 ```php
     public function run(): void
     {
@@ -83,3 +83,98 @@ php artisan make:seeder TaskSeeder
 ```bash
 ./vendor/bin/sail artisan db:seed
 ```
+
+### Etapa 3 - Criando as rotas
+
+- Vamos criar um resource controller para gerenciar as tarefas (o resource controller já cria as rotas para os métodos padrões)
+```bash
+php artisan make:controller -r TaskController
+```
+
+- Configuramos o controler para utilizar o model Task
+```php
+    use App\Models\Task;
+```
+
+- Vamos remover as funções create e edit do controller (app/Http/Controllers/TaskController.php) pois não vamos utilizar
+
+- Em seguida devemos ajustar o controller (app/Http/Controllers/TaskController.php) para utilizar o model Task e retornar todas as tarefas
+```php
+    public function index()
+    {
+        return Task::all();
+    }
+```
+
+- Ajustamos para armazenar uma nova tarefa
+```php
+    public function store(Request $request)
+    {
+        $task = Task::create($request->all());
+        return response()->json($task, 201);
+    }
+```
+
+- Vamos ajustar também para exibir uma tarefa específica
+```php
+    public function show(string $id)
+    {
+        $task = Task::find($id);
+        if ($task) {
+            return $task;
+        }
+
+        return response()->json(['message' => 'Tarefa não encontrada',], 404);
+    }
+```
+
+- Ajustamos para atualizar uma tarefa específica
+```php
+    public function update(Request $request, string $id)
+    {
+        $task = Task::find($id);
+        if ($task) {
+            $task->fill($request->all());
+            $task->save();
+            return $task;
+        }
+
+        return response()->json(['message' => 'Tarefa não encontrada',], 404);
+    }
+```
+
+- E finalmente, para excluir uma tarefa específica
+```php
+    public function destroy(string $id)
+    {
+        $task = Task::find($id);
+        if ($task) {
+            $task->delete();
+            return response()->json(['message' => 'Tarefa removida com sucesso',], 200);
+        }
+
+        return response()->json(['message' => 'Tarefa não encontrada',], 404);
+    }
+```
+
+- Com o controller pronto, vamos ajustar as rotas (routes/api.php) para utilizar o controller
+```php
+use App\Http\Controllers\TaskController;
+
+Route::apiResource('tasks', TaskController::class);
+```
+
+- Para conseguir atribuir os valores para os campos da tarefa, precisamos ajustar o model (app/Models/Task.php) para permitir a atribuição em massa
+```php
+    protected $fillable = [
+        'title',
+        'completed',
+    ];
+```
+
+- Você pode visualizar as rotas criadas com o comando
+```bash
+./vendor/bin/sail artisan route:list
+```
+
+- Na raiz do repositório você pode encontrar um arquivo .json para importar as rotas no Postman
