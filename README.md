@@ -8,6 +8,7 @@ Para visualizar o projeto navegue pelas branchs que representam cada etapa do de
 
 - [Etapa 1 - Configuração do projeto](https://github.com/felipez3r0/workshop-php-laravel-intro/tree/etapa1-configuracao)
 - [Etapa 2 - Preparando o BD](https://github.com/felipez3r0/workshop-php-laravel-intro/tree/etapa2-preparando-o-bd)
+- [Etapa 3 - Criando as rotas](https://github.com/felipez3r0/workshop-php-laravel-intro/tree/etapa3-criando-rotas)
 
 ## Passo a passo
 
