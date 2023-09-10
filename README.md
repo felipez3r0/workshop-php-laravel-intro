@@ -66,12 +66,12 @@ php artisan make:model Task -m
 
 - O Laravel já cria também os recursos para utilização de usuários, por enquanto não vamos utilizar, mas já está criado
 
-- Vamos criar um seeder para popular a tabela com dados de teste
+- Precisamos criar também um factory para gerar os dados de teste das tarefas
 ```bash
-php artisan make:seeder TaskSeeder
+php artisan make:factory TaskFactory
 ```
 
-- Vamos ajustar o seeder (database/seeders/TaskSeeder.php) para popular a tabela com dados de teste
+- Vamos ajustar o seeder (database/seeders/DatabaseSeeder.php) para popular a tabela com dados de teste
 ```php
     public function run(): void
     {
