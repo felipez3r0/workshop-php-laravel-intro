@@ -179,3 +179,58 @@ Route::apiResource('tasks', TaskController::class);
 ```
 
 - Na raiz do repositório você pode encontrar um arquivo .json para importar as rotas no Postman
+
+
+### Etapa 4 - Deploy com fly.io
+
+- Vamos criar uma conta no fly.io (https://fly.io)
+
+- Vamos instalar o flyctl (https://fly.io/docs/getting-started/installing-flyctl/)
+```bash
+curl -L https://fly.io/install.sh | sh
+```
+
+- Vamos fazer login no fly.io
+```bash
+fly auth login
+```
+
+- Vamos configurar nosso app usando o comando launch (quando perguntar sobre o deploy escolha Não/N)
+```bash
+fly launch
+```
+
+- Antes do deploy precisamos ajustar o APP_URL no arquivo fly.toml para o endereço do nosso app
+```toml
+[env]
+  APP_URL = "LINK DO APP"
+```
+
+- Para o banco de dados vamos criar uma instancia free no Render (https://render.com/)
+
+- Vamos configurar no Secrets a conexão com o banco de dados
+```bash
+fly secrets set DB_CONNECTION=pgsql --stage
+fly secrets set DB_HOST=LINK_DO_BD_RENDER --stage
+fly secrets set DB_PORT=5432 --stage
+fly secrets set DB_DATABASE=workshopphplaravel --stage
+fly secrets set DB_USERNAME=workshopphplaravel --stage
+fly secrets set DB_PASSWORD=SENHA_BD_RENDER --stage
+fly secrets deploy
+```
+
+- Vamos adicionar também no fly.toml as configurações para executar as migrations
+```toml
+[deploy]
+  release_command = "php /var/www/html/artisan migrate --force"
+```
+
+- Com os ajustes feitos, vamos fazer o deploy do app
+```bash
+fly deploy
+```
+
+- Caso o migration não seja executado podemos forçar com o comando
+```bash
+fly ssh console -C "php /var/www/html/artisan migrate --force"
+```
